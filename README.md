@@ -1,66 +1,320 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# **Basic Wallet System API with Laravel**
 
-## About Laravel
+This project is a mock basic wallet system built with **Laravel** and integrates **Paystack** for payment processing. It allows users to create wallets, credit them via Paystack, transfer funds between wallets, and generate admin payment summaries. This project also uses **Laravel Sanctum** for authentication.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## **Features**
+- User registration and login via phone number
+- Multiple wallet creation per user with unique currencies
+- Credit wallets using Paystack payment gateway
+- Transfer funds between wallets
+- Admin approval for transfers above N1,000,000
+- Admin monthly payment summaries
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## **Installation Guide**
 
-## Learning Laravel
+Follow these steps to install and set up the project locally:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### **Requirements**
+- PHP 8.x
+- Composer
+- MySQL or other supported databases
+- Laravel 10.x
+- Paystack Account
+- Postman or any API testing tool (for testing the API)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### **Step 1: Clone the Repository**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+git clone https://github.com/olamide-olaniyan/wallet-system
+cd wallet-system
+```
 
-## Laravel Sponsors
+### **Step 2: Install Dependencies**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Use Composer to install the project dependencies:
 
-### Premium Partners
+```bash
+composer install
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### **Step 3: Set Up Environment Variables**
 
-## Contributing
+Copy the `.env.example` file to `.env`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+cp .env.example .env
+```
 
-## Code of Conduct
+Open the `.env` file and configure the following settings:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### **Database Configuration**
+Set up your database connection:
 
-## Security Vulnerabilities
+```bash
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_database_user
+DB_PASSWORD=your_database_password
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### **Paystack Configuration**
+Add the following Paystack environment variables:
 
-## License
+```bash
+PAYSTACK_PUBLIC_KEY=your_paystack_public_key
+PAYSTACK_SECRET_KEY=your_paystack_secret_key
+PAYSTACK_PAYMENT_URL=https://api.paystack.co
+MERCHANT_EMAIL=your_paystack_merchant_email
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### **Step 4: Migrate Database**
+
+Run the migrations the database:
+
+```bash
+php artisan migrate
+```
+
+### **Step 5: Generate Application Key**
+
+Generate the Laravel application key:
+
+```bash
+php artisan key:generate
+```
+
+### **Step 6: Serve the Application**
+
+Finally, start the Laravel development server:
+
+```bash
+php artisan serve
+```
+
+Your API is now running at `http://127.0.0.1:8000`.
+
+---
+
+## **API Documentation**
+
+Below is the detailed documentation for each API endpoint.
+
+### **Authentication**
+
+#### **Register**
+- **Method**: `POST`
+- **URL**: `/register`
+- **Request Body**:
+  ```json
+  {
+    "phone_number": "08123456789",
+    "password": "password123"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "message": "User registered successfully"
+  }
+  ```
+
+#### **Login**
+- **Method**: `POST`
+- **URL**: `/login`
+- **Request Body**:
+  ```json
+  {
+    "phone_number": "08123456789",
+    "password": "password123"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "token": "your-api-token"
+  }
+  ```
+
+#### **Logout**
+- **Method**: `POST`
+- **URL**: `/logout`
+- **Headers**:
+  ```http
+  Authorization: Bearer <your-api-token>
+  ```
+- **Response**:
+  ```json
+  {
+    "message": "Logged out successfully"
+  }
+  ```
+
+---
+
+### **Wallet Endpoints**
+
+#### **Create Wallet**
+- **Method**: `POST`
+- **URL**: `/wallets`
+- **Headers**:
+  ```http
+  Authorization: Bearer <your-api-token>
+  ```
+- **Request Body**:
+  ```json
+  {
+    "currency": "NGN"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "message": "Wallet created successfully",
+    "wallet": {
+      "id": 1,
+      "currency": "NGN",
+      "balance": 0
+    }
+  }
+  ```
+
+#### **Credit Wallet**
+- **Method**: `POST`
+- **URL**: `/wallets/{id}/credit`
+- **Headers**:
+  ```http
+  Authorization: Bearer <your-api-token>
+  ```
+- **Request Body**:
+  ```json
+  {
+    "amount": 10000,
+    "email": "user@example.com"
+  }
+  ```
+- **Response**:
+  Redirects to Paystack for payment processing.
+
+#### **Transfer Funds Between Wallets**
+- **Method**: `POST`
+- **URL**: `/wallets/transfer`
+- **Headers**:
+  ```http
+  Authorization: Bearer <your-api-token>
+  ```
+- **Request Body**:
+  ```json
+  {
+    "from_wallet_id": 1,
+    "to_wallet_id": 2,
+    "amount": 5000
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "message": "Transfer successful",
+    "from_wallet": {
+      "id": 1,
+      "balance": 5000
+    },
+    "to_wallet": {
+      "id": 2,
+      "balance": 5000
+    }
+  }
+  ```
+
+---
+
+### **Admin Endpoints**
+
+#### **Approve Transfer Over N1,000,000**
+- **Method**: `POST`
+- **URL**: `/admin/transfers/{id}/approve`
+- **Headers**:
+  ```http
+  Authorization: Bearer <admin-api-token>
+  ```
+- **Response**:
+  ```json
+  {
+    "message": "Transfer approved successfully"
+  }
+  ```
+
+#### **Monthly Payment Summary**
+- **Method**: `GET`
+- **URL**: `/admin/summary/{month}`
+- **Headers**:
+  ```http
+  Authorization: Bearer <admin-api-token>
+  ```
+- **Response**:
+  ```json
+  {
+    "month": "September",
+    "summary": [
+      {
+        "wallet_id": 1,
+        "total_credits": 500000,
+        "total_debits": 200000
+      }
+    ]
+  }
+  ```
+
+---
+
+## **Testing**
+
+### **Postman**
+You can use **Postman** or similar API testing tools to test the API by sending HTTP requests to the various endpoints mentioned above.
+
+
+---
+
+## **Project Structure**
+
+```bash
+.
+├── app
+├── bootstrap
+├── config
+├── database
+├── public
+├── resources
+├── routes
+│   └── api.php     # API routes are defined here
+├── storage
+└── tests           # Test files can be found here
+```
+
+---
+
+## **Contribution Guide**
+
+1. Fork the repository
+2. Create a new branch for your feature or bugfix
+3. Commit your changes and push to your branch
+4. Open a pull request
+
+---
+
+## **License**
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## **Contact**
+
+If you have any questions, feel free to reach out:
+
+- Name: Olamide Olaniyan
+- Email: olaniyanolamide42@gmail.com
